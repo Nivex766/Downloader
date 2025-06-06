@@ -62,7 +62,7 @@ def baixar():
 
         ydl_opts = {
             **YDL_OPTIONS,
-            'format': 'bestaudio/best' if media_type == "audio" else 'bestvideo+bestaudio/best',
+            'format': 'bestaudio[ext=m4a]/bestaudio/best' if media_type == "audio" else 'bestvideo+bestaudio/best',
             'outtmpl': str(DOWNLOADS_DIR / '%(title)s.%(ext)s'),
         }
 
