@@ -1,0 +1,72 @@
+<!-- templates/spotify.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Spotify Downloader</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+    .track-list { max-height: 300px; overflow-y: scroll; background: #fff; padding: 10px; border: 1px solid #ccc; }
+    .track { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <h1>Baixar músicas do Spotify</h1>
+  <input type="text" id="playlist_url" placeholder="Cole a URL da playlist do Spotify" style="width: 100%;">
+  <button onclick="carregarMusicas()">Carregar músicas</button>
+
+  <div id="musicas" class="track-list" style="display:none;"></div>
+
+  <button onclick="baixarSelecionadas()">Baixar selecionadas</button>
+  <button onclick="baixarTodas()">Baixar todas</button>
+
+  <script>
+    let musicas = [];
+
+    function carregarMusicas() {
+      const url = document.getElementById("playlist_url").value;
+      fetch("/listar_spotify", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ url })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          musicas = data.tracks;
+          const div = document.getElementById("musicas");
+          div.innerHTML = "";
+          div.style.display = "block";
+          musicas.forEach((m, i) => {
+            div.innerHTML += `<div class="track"><input type="checkbox" id="track${i}" checked> ${m.title}</div>`;
+          });
+        } else {
+          alert(data.message || "Erro ao listar músicas");
+        }
+      });
+    }
+
+    function baixarSelecionadas() {
+      const selecionadas = musicas.filter((_, i) => document.getElementById("track" + i).checked);
+      if (selecionadas.length === 0) return alert("Nenhuma música selecionada");
+      fetch("/baixar_spotify", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ tracks: selecionadas })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          window.location.href = data.local_url;
+        } else {
+          alert(data.message || "Erro ao baixar");
+        }
+      });
+    }
+
+    function baixarTodas() {
+      baixarSelecionadas(); // já estão todas marcadas por padrão
+    }
+  </script>
+</body>
+</html>
