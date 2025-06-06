@@ -1,20 +1,25 @@
-# Use imagem base com Python
 FROM python:3.11-slim
 
-# Instala dependências do sistema e o ffmpeg
-RUN apt-get update && apt-get install -y ffmpeg gcc
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Cria diretório da aplicação
+# Cria diretórios
 WORKDIR /app
-
-# Copia os arquivos
 COPY . /app
 
-# Instala dependências do Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Instala dependências Python
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# Expõe a porta usada pelo Flask
-EXPOSE 8080
+# Instala o spotdl
+RUN pip install spotdl
 
-# Comando para rodar o servidor
-CMD ["python", "app.py"]
+# Porta usada pelo Flask
+ENV PORT=8080
+
+# Comando padrão
+CMD ["python", "spot.py"]
