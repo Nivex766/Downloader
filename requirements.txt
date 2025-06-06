@@ -1,5 +1,6 @@
 Flask
 yt-dlp
 gunicorn
+pydub
 spotdl
 browser-cookie3
