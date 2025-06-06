@@ -1,1 +1,905 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>☠ N1VËX DOWNLOADER ☠</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --neon-green: #00ff00;
+      --neon-pink: #ff00ff;
+      --neon-blue: #00ffff;
+      --dark-bg: #0a0a0a;
+      --darker-bg: #050505;
+      --panel-bg: #111111;
+      --text-primary: #e0e0e0;
+      --text-secondary: #888888;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'VT323', monospace;
+      background-color: var(--dark-bg);
+      color: var(--neon-green);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 0, 0.02) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.02) 0%, transparent 20%);
+      letter-spacing: 1px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Press Start 2P', cursive;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: var(--neon-pink);
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+      text-align: center;
+      letter-spacing: 3px;
+      animation: flicker 1.5s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 
+          0 0 5px var(--neon-pink),
+          0 0 10px var(--neon-pink),
+          0 0 20px rgba(255, 0, 255, 0.5);
+      }
+      20%, 24%, 55% {
+        text-shadow: none;
+      }
+    }
+
+    .panel {
+      background-color: var(--panel-bg);
+      border: 1px solid rgba(0, 255, 255, 0.1);
+      border-radius: 0;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-pink), var(--neon-blue));
+      animation: rainbow 5s linear infinite;
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--neon-blue);
+      font-size: 1.1rem;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: var(--darker-bg);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      color: var(--neon-green);
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+    }
+
+    input::placeholder {
+      color: #444;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+      background-color: transparent;
+      color: var(--neon-green);
+      border: 1px solid var(--neon-green);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+
+    .btn:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(0, 255, 0, 0),
+        rgba(0, 255, 0, 0.1),
+        rgba(0, 255, 0, 0)
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    #status {
+      margin: 1.5rem 0;
+      font-size: 1.3rem;
+      min-height: 1.5rem;
+      text-align: center;
+    }
+
+    .download-box {
+      background: var(--darker-bg);
+      border: 1px solid var(--neon-pink);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease;
+    }
+    
+.download-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  background: linear-gradient(90deg, #00ffea, #ff00e0);
+  color: black;
+  text-decoration: none;
+  border: 2px solid #00ffea;
+  border-radius: 6px;
+  box-shadow: 0 0 10px #ff00e0;
+  text-align: center;
+  transition: 0.3s ease-in-out;
+}
+
+.download-link:hover {
+  background: linear-gradient(90deg, #ff00e0, #00ffea);
+  color: #fff;
+  border-color: #ff00e0;
+  box-shadow: 0 0 15px #00ffea;
+}
+    
+    .download-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 0, 255, 0.05) 0%,
+        rgba(0, 255, 255, 0.05) 100%
+      );
+      pointer-events: none;      
+    }
+
+    .download-box h3 {
+      color: var(--neon-blue);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .download-box a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      background-color: transparent;
+      color: var(--neon-pink);
+      border: 1px solid var(--neon-pink);
+      text-decoration: none;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-box a:hover {
+      background-color: rgba(255, 0, 255, 0.1);
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .alert {
+      background-color: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      color: #ff5555;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      font-size: 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .alert::before {
+      content: ' ';
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-align: center;
+      border-top: 1px solid rgba(0, 255, 255, 0.1);
+    }
+
+    footer a {
+      color: var(--neon-blue);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    footer a:hover {
+      color: var(--neon-pink);
+      text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+    }
+
+    /* Playlist styles */
+    #playlist-container {
+      display: none;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .playlist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .toggle-all {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+      color: var(--neon-blue);
+    }
+
+    .toggle-all input {
+      width: auto;
+      margin-right: 0.5rem;
+      accent-color: var(--neon-pink);
+    }
+
+    .songs-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      background-color: var(--darker-bg);
+    }
+
+    .song-item {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .song-item:last-child {
+      border-bottom: none;
+    }
+
+    .song-item:hover {
+      background-color: rgba(0, 255, 255, 0.05);
+    }
+
+    .song-item input {
+      width: auto;
+      margin-right: 1rem;
+      accent-color: var(--neon-pink);
+    }
+
+    .song-name {
+      flex-grow: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-primary);
+    }
+
+    /* Loading animation */
+    .loader {
+      display: none;
+      width: 48px;
+      height: 48px;
+      margin: 1rem auto;
+      border: 3px solid var(--neon-pink);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Terminal-like effect */
+    .typing {
+      border-right: 3px solid var(--neon-green);
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--neon-green); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .panel {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--darker-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--neon-pink);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--neon-blue);
+    }
+    
+      @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes confetti {
+    0% { transform: translateY(0) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: var(--neon-pink);
+    animation: confetti 3s ease-out forwards;
+    z-index: 1000;
+  }
+  
+  .reset-animation {
+    animation: fadeOut 0.5s ease-out forwards;
+  }
+  
+  @keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>☠ N1VËX DOWNLOADER ☠</h1>
+    
+    <div class="panel">
+      <div class="form-group">
+        <label for="plataforma"><i class="fas fa-globe"></i> PLATAFORMA</label>
+        <select id="plataforma" onchange="atualizarTipo()">
+          <option value="YouTube">YouTube</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Spotify">Spotify</option>
+        </select>
+      </div>
+
+      <div id="tipo-container" class="form-group">
+        <label for="tipo"><i class="fas fa-file-alt"></i> TIPO</label>
+        <select id="tipo">
+          <option value="Audio">Áudio</option>
+          <option value="Video">Vídeo</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="url"><i class="fas fa-link"></i> URL</label>
+        <input type="text" id="url" placeholder="Cole a URL aqui">
+      </div>
+
+      <button id="download-btn" class="btn" onclick="baixar()">
+        <i class="fas fa-download"></i> BAIXAR
+      </button>
+
+      <div id="loader" class="loader"></div>
+      <div id="status"></div>
+    </div>
+
+    <div id="playlist-container" class="panel">
+      <div class="playlist-header">
+        <h3><i class="fas fa-list-ol"></i> MÚSICAS NA PLAYLIST</h3>
+        <div class="toggle-all" onclick="toggleAllSongs()">
+          <input type="checkbox" id="select-all">
+          <label for="select-all">SELECIONAR TODAS</label>
+        </div>
+      </div>
+      
+      <div class="songs-list" id="songs-list">
+        <!-- Songs will be added here dynamically -->
+      </div>
+
+      <button id="download-selected-btn" class="btn" onclick="baixarSelecionadas()" style="margin-top: 1rem;">
+        <i class="fas fa-download"></i> BAIXAR SELECIONADAS
+      </button>
+    </div>
+
+    <div id="resultado" style="margin-top: 20px;"></div>
+
+    <div class="alert">
+   👾Versão TESTE – se der algum erro ou qualquer bosta, <strong>não</strong> me chamem no 
+  <a href="https://wa.me/556481288417" target="_blank">WhatsApp👾</a>
+</div>
+  </div>
+
+  <footer>
+    Feito por N1vëx <i class="fas fa-skull"></i> | 
+    Design inspirado em <a href="https://ammo.lol/N1vex" target="_blank">N1vëx🥸</a>
+  </footer>
+
+<script>
+createConfetti();
+
+function createConfetti() {
+    const colors = ['#00ff00', '#ff00ff', '#00ffff', '#ffff00'];
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(confetti);
+        
+        // Remove o confete após a animação
+        setTimeout(() => {
+            confetti.remove();
+        }, 3000);
+    }
+}
+
+let currentSongs = [];
+let isPlaylist = false;
+
+function atualizarTipo() {
+    const plataforma = document.getElementById('plataforma').value;
+    const tipoContainer = document.getElementById('tipo-container');
+    
+    tipoContainer.style.display = plataforma === "Spotify" ? "none" : "block";
+}
+
+function toggleLoading(show) {
+    const loader = document.getElementById('loader');
+    const btn = document.getElementById('download-btn');
+    
+    if (show) {
+        loader.style.display = 'block';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
+    } else {
+        loader.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> BAIXAR';
+    }
+}
+
+async function baixar() {
+    const plataforma = document.getElementById('plataforma').value;
+    const tipo = document.getElementById('tipo').value;
+    const url = document.getElementById('url').value.trim();
+
+    if (!url) {
+        showStatus('❌ POR FAVOR, INSIRA UMA URL', 'error');
+        return;
+    }
+
+    toggleLoading(true);
+    showStatus('⌛ ANALISANDO URL...', 'loading');
+
+    try {
+        let endpoint = "/baixar";
+        let body = { url, plataforma, tipo: tipo.toLowerCase() };
+
+        if (plataforma === "Spotify") {
+            endpoint = "/baixar_spotify";
+            body = { url };
+        }
+
+        const resposta = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        const resultado = await resposta.json();
+
+        if (resultado.erro || resultado.status === "error") {
+            showStatus(`❌ ${resultado.erro || resultado.message || "ERRO DESCONHECIDO"}`, 'error');
+        } else if (resultado.songs) {
+            // This is a playlist with songs to choose from
+            currentSongs = resultado.songs;
+            isPlaylist = true;
+            showPlaylist(resultado.songs);
+            showStatus(`🎵 ${resultado.songs.length} MÚSICAS ENCONTRADAS`, 'success');
+        } else {
+            // Single download
+            showDownloadResult(resultado);
+        }
+    } catch (error) {
+        console.error('Erro completo:', error);
+        showStatus('❌ ERRO NA COMUNICAÇÃO COM O SERVIDOR', 'error');
+    } finally {
+        toggleLoading(false);
+    }
+}
+
+function showPlaylist(songs) {
+    const playlistContainer = document.getElementById('playlist-container');
+    const songsList = document.getElementById('songs-list');
+    
+    // Clear previous songs
+    songsList.innerHTML = '';
+    
+    // Add each song to the list
+    songs.forEach((song, index) => {
+        const songItem = document.createElement('div');
+        songItem.className = 'song-item';
+        songItem.innerHTML = `
+            <input type="checkbox" id="song-${index}" checked>
+            <label for="song-${index}" class="song-name">${song}</label>
+        `;
+        songsList.appendChild(songItem);
+    });
+    
+    // Show the playlist container
+    playlistContainer.style.display = 'block';
+    
+    // Scroll to playlist
+    playlistContainer.scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleAllSongs() {
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('#songs-list input[type="checkbox"]');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+}
+
+async function baixarSelecionadas() {
+    const checkboxes = document.querySelectorAll('#songs-list input[type="checkbox"]:checked');
+    
+    if (checkboxes.length === 0) {
+        showStatus('❌ NENHUMA MÚSICA SELECIONADA', 'error');
+        return;
+    }
+
+    const selectedSongs = Array.from(checkboxes).map((cb, index) => {
+        return currentSongs[index];
+    });
+
+    const url = document.getElementById('url').value.trim();
+    const btn = document.getElementById('download-selected-btn');
+    
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> BAIXANDO ${selectedSongs.length} MÚSICAS...`;
+    showStatus(`⌛ INICIANDO DOWNLOAD DE ${selectedSongs.length} MÚSICAS...`, 'loading');
+
+    try {
+        // For each selected song, trigger download
+        for (const song of selectedSongs) {
+            showStatus(`⌛ BAIXANDO: ${song}...`, 'loading');
+            
+            const resposta = await fetch("/baixar_spotify_musica", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    url: url,
+                    musica: song 
+                })
+            });
+
+            const resultado = await resposta.json();
+            
+            if (resultado.erro) {
+                showStatus(`❌ ERRO AO BAIXAR ${song}: ${resultado.erro}`, 'error');
+            } else {
+                showDownloadResult(resultado, song);
+            }
+        }
+        
+        showStatus(`✅ DOWNLOAD DE ${selectedSongs.length} MÚSICAS CONCLUÍDO!`, 'success');
+    } catch (error) {
+        console.error('Erro completo:', error);
+        showStatus('❌ ERRO DURANTE O DOWNLOAD DAS MÚSICAS', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> BAIXAR SELECIONADAS';
+    }
+}
+
+function showStatus(message, type = 'info') {
+    const statusElement = document.getElementById('status');
+    statusElement.textContent = message;
+    statusElement.className = type === 'error' ? 'error' : 
+                            type === 'success' ? 'success' : 
+                            type === 'loading' ? 'typing' : '';
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    atualizarTipo();
+    
+    // Adiciona suporte para colar URLs
+    document.getElementById('url').addEventListener('paste', function(e) {
+        setTimeout(() => {
+            const url = this.value.trim();
+            if (url.includes('spotify.com/playlist') || url.includes('spotify.com/album')) {
+                document.getElementById('plataforma').value = 'Spotify';
+                atualizarTipo();
+            }
+        }, 10);
+    });
+});
+
+// Adiciona efeito de terminal ao status
+function typeWriter(element, text, speed = 50) {
+    let i = 0;
+    element.textContent = '';
+    function typing() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+        }
+    }
+    typing();
+}
+
+// Verifica o status do servidor periodicamente
+function checkServerStatus() {
+    fetch('/status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'online') {
+                console.log('Servidor online:', data.timestamp);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao verificar status do servidor:', error);
+        });
+    
+    setTimeout(checkServerStatus, 30000); // Verifica a cada 30 segundos
+}
+
+// Inicia a verificação de status
+checkServerStatus();
+
+// Adiciona suporte para tecla Enter no campo de URL
+document.getElementById('url').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        baixar();
+    }
+});
+
+// Função para copiar links para a área de transferência
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showStatus('✔ LINK COPIADO!', 'success');
+    }).catch(err => {
+        showStatus('❌ ERRO AO COPIAR', 'error');
+    });
+}
+
+// Adiciona botão de copiar nos resultados de download
+function addCopyButton(element, text) {
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn';
+    copyBtn.style.marginLeft = '10px';
+    copyBtn.style.padding = '0.5rem';
+    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+    copyBtn.onclick = () => copyToClipboard(text);
+    element.appendChild(copyBtn);
+}
+
+// Melhoria na exibição de resultados
+function showDownloadResult(result, songName = '') {
+    let title = '✅ DOWNLOAD CONCLUÍDO!';
+    if (songName) {
+        title = `✅ "${songName}" BAIXADA COM SUCESSO!`;
+    }
+    
+    showStatus(title, 'success');
+    
+    const linkBox = document.createElement('div');
+    linkBox.className = 'download-box';
+    linkBox.innerHTML = `
+        <h3>🔗 LINK DE DOWNLOAD</h3>
+        <p>${songName || 'SEU ARQUIVO ESTÁ PRONTO PARA DOWNLOAD'}</p>
+        <div class="link-container">
+            <a href="${result.download_page || result.link}" target="_blank">
+                <i class="fas fa-download"></i> BAIXAR AGORA
+            </a>
+        </div>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-secondary)">
+            Link válido por 14 dias
+        </p>
+    `;
+    
+    const linkContainer = document.querySelector('.link-container');
+    addCopyButton(linkContainer, result.download_page || result.link);
+    
+    const linkDownload = document.getElementById('link-download');
+    linkDownload.appendChild(linkBox);
+    
+    // Scroll to the download link
+    linkBox.scrollIntoView({ behavior: 'smooth' });
+}
+
+function showDownloadResult(resultado) {
+    const resultadoDiv = document.getElementById('resultado');
+    resultadoDiv.innerHTML = ''; // limpa resultados anteriores
+
+    const link = document.createElement('a');
+    link.href = resultado.local_url;
+    link.textContent = '👾 AQUI SEU VIDEO/AUDIO 👾';
+    link.download = resultado.filename;
+    link.classList.add('download-link', 'pulse');
+    
+    // Função para resetar a interface
+    function resetInterface() {
+        const resultadoDiv = document.getElementById('resultado');
+        const urlInput = document.getElementById('url');
+        const statusElement = document.getElementById('status');
+        
+        // Animação de fade out no resultado
+        resultadoDiv.classList.add('reset-animation');
+        
+        // Limpa os campos após a animação
+        setTimeout(() => {
+            resultadoDiv.innerHTML = '';
+            resultadoDiv.classList.remove('reset-animation');
+            urlInput.value = '';
+            statusElement.textContent = '✅ PRONTO PARA NOVO DOWNLOAD';
+            
+            // Adiciona efeito de digitação
+            typeWriter(statusElement, '✅ PRONTO PARA NOVO DOWNLOAD...');
+        }, 500);
+    }
+    
+    // Versão melhorada do typeWriter
+    function typeWriter(element, text, speed = 50) {
+        let i = 0;
+        element.textContent = '';
+        element.style.borderRight = '3px solid var(--neon-green)';
+        
+        function typing() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(typing, speed);
+            } else {
+                setTimeout(() => {
+                    element.style.borderRight = 'none';
+                }, 1000);
+            }
+        }
+        typing();
+    }
+    
+    setTimeout(() => {
+        resetInterface();
+    }, 30000); // 30 segundos até resetar
+    
+    link.addEventListener('click', function() {
+        setTimeout(resetInterface, 1000);
+    });
+
+    resultadoDiv.appendChild(link);
+}
+</script>
+</body>
+</html>
