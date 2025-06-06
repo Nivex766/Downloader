@@ -10,22 +10,24 @@ import shutil
 import zipfile
 from datetime import datetime
 
-# Caminhos adaptados para ambiente Render (diretório local)
+# Caminhos base
 BASE_DIR = Path(__file__).parent.resolve()
 TEMPLATES_PATH = BASE_DIR / "templates"
 DOWNLOADS_DIR = BASE_DIR / "downloads"
-TIKTOK_COOKIE_PATH = BASE_DIR / "cookies" / "tiktok_cookies.txt"  # Ajuste se quiser usar cookies
+TIKTOK_COOKIE_PATH = BASE_DIR / "cookies" / "tiktok_cookies.txt"
 
 app = Flask(__name__, template_folder=str(TEMPLATES_PATH))
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = str(BASE_DIR / "uploads")
 
 Path(app.config['UPLOAD_FOLDER']).mkdir(exist_ok=True)
 DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
+# Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Opções padrão yt_dlp
 YDL_OPTIONS = {
     'quiet': True,
     'no_warnings': True,
@@ -34,6 +36,7 @@ YDL_OPTIONS = {
     'noplaylist': True,
 }
 
+
 def load_tiktok_cookies_from_file():
     if not TIKTOK_COOKIE_PATH.exists():
         logger.warning(f"Arquivo de cookies não encontrado em: {TIKTOK_COOKIE_PATH}")
@@ -41,37 +44,40 @@ def load_tiktok_cookies_from_file():
     logger.info("Cookies do TikTok carregados com sucesso (cookies.txt)")
     return str(TIKTOK_COOKIE_PATH)
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
 @app.route("/spotify")
 def spotify_interface():
     return render_template("spotify.html")
+
 
 @app.route("/baixar", methods=["POST"])
 def baixar():
     try:
         data = request.get_json()
         url = data.get("url")
-        platform = data.get("plataforma", "").lower()
-        media_type = data.get("tipo", "").lower()
+        plataforma = data.get("plataforma", "").lower()
+        tipo = data.get("tipo", "").lower()
 
         if not url:
             return jsonify({"status": "error", "message": "URL não fornecida"}), 400
 
         ydl_opts = {
             **YDL_OPTIONS,
-            'format': 'bestaudio[ext=m4a]/bestaudio/best' if media_type == "audio" else 'bestvideo+bestaudio/best',
+            'format': 'bestaudio[ext=m4a]/bestaudio/best' if tipo == "audio" else 'bestvideo+bestaudio/best',
             'outtmpl': str(DOWNLOADS_DIR / '%(title)s.%(ext)s'),
         }
 
-        if platform == "tiktok":
+        if plataforma == "tiktok":
             cookie_path = load_tiktok_cookies_from_file()
             if cookie_path:
                 ydl_opts['cookiefile'] = cookie_path
 
-        if media_type == "audio":
+        if tipo == "audio":
             ydl_opts['postprocessors'] = [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -80,11 +86,11 @@ def baixar():
 
         with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
-            if info is None:
+            if not info:
                 return jsonify({"status": "error", "message": "Não foi possível extrair informações"}), 400
 
             filename = ydl.prepare_filename(info)
-            if media_type == "audio":
+            if tipo == "audio":
                 filename = os.path.splitext(filename)[0] + '.mp3'
 
             if not os.path.exists(filename):
@@ -104,6 +110,7 @@ def baixar():
             "message": f"Falha no download: {str(e)}",
             "error_type": type(e).__name__
         }), 500
+
 
 @app.route('/listar_spotify', methods=['POST'])
 def listar_spotify():
@@ -141,6 +148,7 @@ def listar_spotify():
             "status": "error",
             "message": f"Falha ao listar músicas: {str(e)}"
         }), 500
+
 
 @app.route('/baixar_spotify', methods=['POST'])
 def baixar_spotify():
@@ -227,6 +235,7 @@ def baixar_spotify():
             "message": f"Erro ao baixar músicas do Spotify: {str(e)}"
         }), 500
 
+
 @app.route("/download_temp/<filename>")
 def download_temp(filename):
     try:
@@ -256,6 +265,7 @@ def download_temp(filename):
     except Exception as e:
         logger.error(f"Erro ao servir arquivo: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
