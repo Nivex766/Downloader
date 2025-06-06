@@ -1,0 +1,5 @@
+Flask
+yt-dlp
+gunicorn
+spotdl
+browser-cookie3
